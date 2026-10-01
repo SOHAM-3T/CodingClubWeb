@@ -410,7 +410,7 @@ export default function AdminDashboardClient({ data }: { data: AdminData }) {
   const [newBlogTag, setNewBlogTag] = useState("")
 
   const saveBlog = async (id: string, updates: any) => {
-    const res = await fetch("/api/admin/blogs", {
+    const res = await fetch(`/api/admin/blogs?id=${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, ...updates }),
@@ -446,7 +446,7 @@ export default function AdminDashboardClient({ data }: { data: AdminData }) {
     toast({ title: "Blog created" })
   }
   const toggleBlogPublish = async (id: string, current: boolean) => {
-    const res = await fetch("/api/admin/blogs", {
+    const res = await fetch(`/api/admin/blogs?id=${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, published: !current }),
