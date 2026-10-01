@@ -160,15 +160,23 @@ export default function BlogClient({
       <PremiumPageBackground />
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
+      {/* Page introduction */}
+      <section className="pt-28 sm:pt-32 pb-10 sm:pb-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
-
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1.5 mb-5 rounded-full border border-blue-400/20 bg-blue-400/5 text-xs font-semibold tracking-wide text-blue-200"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4A90E2] shadow-[0_0_10px_#4A90E2]" />
+            CODING CLUB JOURNAL
+          </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-heading font-bold text-5xl sm:text-6xl lg:text-7xl mb-6"
+            className="font-heading font-bold text-4xl sm:text-5xl lg:text-6xl mb-5 tracking-tight"
           >
             <span className="gradient-text-premium">{heroTitle}</span>
           </motion.h1>
@@ -176,7 +184,7 @@ export default function BlogClient({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8"
+            className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed mb-7"
           >
             {heroDescription}
           </motion.p>
@@ -199,19 +207,11 @@ export default function BlogClient({
         </div>
       </section>
 
-      {/* Featured Story */}
-      {featuredStory && filter === "latest" && activeCategory === "all" && !search && (
-        <section className="px-4 sm:px-6 lg:px-8 mb-20 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <FeaturedStory story={featuredStory} />
-          </div>
-        </section>
-      )}
-
       {/* Search + Filters */}
-      <section className="px-4 sm:px-6 lg:px-8 mb-12 relative z-10">
+      <section className="px-4 sm:px-6 lg:px-8 mb-14 relative z-10">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-4 mb-6">
+          <div className="rounded-2xl border border-white/10 bg-[#080d1b]/70 backdrop-blur-xl p-3 sm:p-4 shadow-2xl shadow-black/10">
+            <div className="flex flex-col lg:flex-row gap-3 mb-3">
             {/* Search */}
             <div className="flex-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
@@ -220,7 +220,7 @@ export default function BlogClient({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search articles, tags, or topics..."
-                className="w-full pl-12 pr-4 py-3.5 glass-strong rounded-xl border border-white/10 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4A90E2]/50 transition-all"
+                className="w-full pl-12 pr-4 py-3.5 bg-white/[0.04] rounded-xl border border-white/10 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4A90E2]/50 transition-all"
               />
               {search && (
                 <button
@@ -261,27 +261,42 @@ export default function BlogClient({
             </div>
           </div>
 
-          {/* Category chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            <CategoryChip
-              active={activeCategory === "all"}
-              onClick={() => setActiveCategory("all")}
-              label="All Topics"
-              count={blogs.length}
-            />
-            {categories.map((c) => (
+            {/* Category chips */}
+            <div className="flex items-center gap-2 overflow-x-auto pt-3 border-t border-white/[0.07] pb-1">
+              <span className="hidden sm:inline text-xs font-medium text-gray-500 mr-1">Topics</span>
               <CategoryChip
-                key={c.id}
-                active={activeCategory === c.slug}
-                onClick={() => setActiveCategory(c.slug)}
-                label={c.name}
-                count={c.count}
-                color={c.color}
+                active={activeCategory === "all"}
+                onClick={() => setActiveCategory("all")}
+                label="All Topics"
+                count={blogs.length}
               />
-            ))}
+              {categories.map((c) => (
+                <CategoryChip
+                  key={c.id}
+                  active={activeCategory === c.slug}
+                  onClick={() => setActiveCategory(c.slug)}
+                  label={c.name}
+                  count={c.count}
+                  color={c.color}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
+
+      {/* Featured story */}
+      {featuredStory && filter === "latest" && activeCategory === "all" && !search && (
+        <section className="px-4 sm:px-6 lg:px-8 mb-16 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 mb-5">
+              <span className="w-9 h-px bg-gradient-to-r from-[#4A90E2] to-transparent" />
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-200">Editor&apos;s pick</p>
+            </div>
+            <FeaturedStory story={featuredStory} />
+          </div>
+        </section>
+      )}
 
       {/* Trending Section */}
       {filter === "latest" && activeCategory === "all" && !search && trending.length > 0 && (
@@ -370,66 +385,72 @@ export default function BlogClient({
 
 function FeaturedStory({ story }: { story: BlogListItem }) {
   return (
-    <Link href={`/blog/${story.slug}`} className="group block featured-story">
-      <div className="absolute inset-0 -z-10">
+    <Link href={`/blog/${story.slug}`} className="group block featured-story rounded-2xl border border-white/10 bg-[#080d1b]/80 overflow-hidden hover:border-[#4A90E2]/35 transition-colors duration-500">
+      <div className="grid lg:grid-cols-5 min-h-[420px]">
+        <div className="relative min-h-[260px] lg:min-h-0 lg:col-span-2 overflow-hidden bg-white/5">
         {story.coverImage ? (
           <img
             src={story.coverImage}
             alt={story.title}
-            className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
         ) : (
           <div className="w-full h-full bg-white/5 flex items-center justify-center">
             <span className="text-white/20 font-bold text-4xl">{story.title.charAt(0)}</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#02040A] via-[#02040A]/80 to-transparent" />
-      </div>
-      <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-4xl">
-        {story.category && (
-          <span
-            className="inline-flex items-center gap-1.5 px-3 py-1 mb-4 rounded-full text-xs font-semibold glass-strong border"
-            style={{
-              borderColor: `${story.category.color}40`,
-              color: story.category.color,
-              background: `${story.category.color}15`,
-            }}
-          >
-            <Hash className="w-3 h-3" />
-            {story.category.name}
-          </span>
-        )}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="font-heading font-bold text-3xl sm:text-4xl lg:text-5xl text-white mb-4 group-hover:text-[#4A90E2] transition-colors duration-300"
-        >
-          {story.title}
-        </motion.h2>
-        <p className="text-base sm:text-lg text-gray-300 mb-6 line-clamp-2 max-w-2xl">
-          {story.excerpt}
-        </p>
-        <div className="flex items-center gap-4 text-sm text-gray-400">
-          <div className="flex items-center gap-2">
-            <img
-              src={story.author.avatar}
-              alt={story.author.name}
-              className="w-8 h-8 rounded-full object-cover ring-2 ring-white/10"
-            />
-            <span className="text-white font-medium">{story.author.name}</span>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#080d1b]/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#080d1b]/50" />
+          <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/30 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-md">
+            <Star className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
+            Featured article
           </div>
-          <span className="w-1 h-1 bg-gray-500 rounded-full" />
-          <span>{story.readTime}</span>
-          <span className="w-1 h-1 bg-gray-500 rounded-full" />
-          <span className="flex items-center gap-1">
-            <Eye className="w-3.5 h-3.5" /> {story.viewCount}
-          </span>
         </div>
-        <div className="mt-6 inline-flex items-center gap-2 text-[#4A90E2] font-medium group-hover:gap-3 transition-all">
-          Read story
-          <ArrowRight className="w-4 h-4" />
+        <div className="relative flex flex-col justify-center p-7 sm:p-10 lg:col-span-3 lg:p-12">
+          {story.category && (
+            <span
+              className="inline-flex w-fit items-center gap-1.5 px-3 py-1 mb-5 rounded-full text-xs font-semibold border"
+              style={{
+                borderColor: `${story.category.color}40`,
+                color: story.category.color,
+                background: `${story.category.color}15`,
+              }}
+            >
+              <Hash className="w-3 h-3" />
+              {story.category.name}
+            </span>
+          )}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="font-heading font-bold text-2xl sm:text-3xl lg:text-4xl text-white mb-4 leading-[1.12] group-hover:text-[#76b0ed] transition-colors duration-300"
+          >
+            {story.title}
+          </motion.h2>
+          <p className="text-sm sm:text-base text-gray-300 mb-7 line-clamp-3 max-w-2xl leading-relaxed">
+            {story.excerpt}
+          </p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-3 text-sm text-gray-400">
+            <div className="flex items-center gap-2">
+              <img
+                src={story.author.avatar}
+                alt={story.author.name}
+                className="w-8 h-8 rounded-full object-cover ring-2 ring-white/10"
+              />
+              <span className="text-white font-medium">{story.author.name}</span>
+            </div>
+            <span className="hidden sm:block w-1 h-1 bg-gray-500 rounded-full" />
+            <span>{story.readTime}</span>
+            <span className="hidden sm:block w-1 h-1 bg-gray-500 rounded-full" />
+            <span className="flex items-center gap-1">
+              <Eye className="w-3.5 h-3.5" /> {formatCount(story.viewCount)} views
+            </span>
+          </div>
+          <div className="mt-7 inline-flex items-center gap-2 text-[#65a9ed] font-medium group-hover:gap-3 transition-all">
+            Read article
+            <ArrowRight className="w-4 h-4" />
+          </div>
         </div>
       </div>
     </Link>
